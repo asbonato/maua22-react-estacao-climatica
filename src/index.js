@@ -1,18 +1,43 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { EstacaoClimatica } from './EstacaoClimatica'
 
 class App extends React.Component {
 
-    constructor(props){
-        super(props)
-        this.state = {
+    // constructor(props){
+    //     super(props)
+    //     this.state = {
+    //         latitude: null,
+    //         longitude: null,
+    //         estacao: null,
+    //         data: null,
+    //         icone: null,
+    //         mensagemDeErro: null,
+    //     }
+    //     console.log('construtor')
+    // }
+        state = {
             latitude: null,
             longitude: null,
             estacao: null,
             data: null,
-            icone: null
+            icone: null,
+            mensagemDeErro: null,
         }
+ 
+
+    componentDidMount(){
+        this.obterLocalizacao()
+        console.log('index: componentDidMount')
+    }
+
+    componentDidUpdate(){
+        console.log('index: componentDidUpdate')
+    }
+
+    componentWillUnmount(){
+        console.log('index: componentWillUnmount')
     }
 
     obterEstacao = (data, latitude) => {
@@ -48,7 +73,7 @@ class App extends React.Component {
                 let data = new Date()
                 let estacao = this.obterEstacao(data, posicao.coords.latitude);
                 let icone = this.icones[estacao]
-                console.log(icone)
+                //console.log(icone)
                 this.setState(
                     {
                         latitude: posicao.coords.latitude,
@@ -69,6 +94,7 @@ class App extends React.Component {
    
 
     render(){
+        console.log('index: render')
         return(
             //responsividdade, margem acima
             <div className='container mt-2'>
@@ -76,42 +102,22 @@ class App extends React.Component {
                 <div className='row justify-content-center'>
                     {/** oito colunas das doze disponíveis serão usadas para tela médias em diante */}
                     <div className='col-md-8'>
-                        {/** um cartão Bootstrap */}
-                        <div className='card'>
-                            {/** o corpo do cartão */}
-                            <div className='card-body'>
-                                {/** centraliza verticalmente, margem abaixo */}
-                                <div className='d-flex align-items-center border rounded mb-2'
-                                    style={{height: '6rem'}}>
-                                        {/** ícone obtido do estado do componente */}
-                                        <i className={`fas fa-5x ${this.state.icone}`}></i>
-                                        {/** largura 75%, margem à esquerd (start), fs aumenta a fonte */}
-                                        <p className='w-75 ms-3 text-center fs-1'>{this.state.estacao}</p>
-                                </div>
-                                <div>
-                                    <p className='text-center'>
-                                        {/** renderização condicional */}
-                                        {
-                                            this.state.latitude ?
-                                            `Coordenadas: ${this.state.latitude}, 
-                                                ${this.state.longitude}. Data: ${this.state.data}`
-                                            :
-                                            this.state.mensagemDeErro?
-                                                `${this.state.mensagemDeErro}`
-                                                :
-                                                'Clique no botão para saber a sua estação climática'
-                                        }
-                                    </p>
-                                    <div>
-                                        {/** botão azul (outline, 100% de largura e margem acima) */}
-                                        <button onClick={this.obterLocalizacao}
-                                            className='btn btn-outline-primary w-100 mt-2'>
-                                                Qual a minha estação?
-                                            </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {
+                            this.state.mensagemDeErro?
+                            <p className='border rounded p-2 fs-1 text center'>
+                                É preciso dar permissão para acesso à localização.
+                                Atualize a página e tente de novo, ajustando a configuração
+                                no seu navegador.
+                            </p>
+                            :
+                            <EstacaoClimatica 
+                                icone={this.state.icone}
+                                estacao={this.state.estacao}
+                                latitude={this.state.latitude}
+                                longitude={this.state.longitude}
+                                obterLocalizacao={this.obterLocalizacao}
+                            />
+                        }
                     </div>
                 </div>
             </div>
